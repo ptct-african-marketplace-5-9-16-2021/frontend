@@ -1,22 +1,57 @@
+import axios from "axios";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { axiosWithAuth } from "../Utils/axiosWithAuth";
 
-import React, { useState } from 'react';
+const initialValues  = {
+    username: '',
+    password: ''
+}
 
 
-function Login() {
-    const [details, setDetails] = useState({
-        username: '',
-        password:''
-    })
+function Login(props) {
+    const [loginValues,setLoginValues] = useState(initialValues);
 
     const changeHandler = (e) => {
-        setDetails({...details,[e.target.name]:e.target.value})
-        }
-
-    const submitHandler = e => {
-        e.preventDefault();
-        Login(details)
+        setLoginValues({...loginValues,[e.target.name]:e.target.value})
     }
+
+    const submitHandler = (e) => {
+        e.preventDefault();
     
+        axios
+            .post("https://frozen-lowlands-84790.herokuapp.com/login",
+            `grant_type=password&username=${loginValues.username}&password=${loginValues.password}`,
+            {
+                headers: {
+              Authorization: `Basic ${btoa("lambda-client:lambda-secret")}`,
+              "Content-Type": "application/x-www-form-urlencoded" 
+                }
+            })
+            .then(res => {
+                localStorage.setItem("token", res.data.access_token);
+                axiosWithAuth()
+                .get("/getroleinfo")
+                .then(res => {
+                    
+                    if(res.data === "owner")
+                    {
+                    props.history.push("/owner")
+                    }
+                    else if(res.data === "buyer")
+                    {
+                    props.history.push("/buyer")
+        }
+                })
+                .catch(err => {
+                    console.log(err.response)
+                })
+            })
+            .catch(err => {
+                console.log(err.response);
+            })
+    
+    }
  
 
 
@@ -30,7 +65,7 @@ function Login() {
                         name = 'username' 
                         id = 'username' 
                         onChange = {changeHandler} 
-                        value = {details.username}
+                        value = {loginValues.username}
                     />
                     <br/>
                     <br/>
@@ -40,11 +75,13 @@ function Login() {
                         name = 'password' 
                         id = 'password' 
                         onChange = {changeHandler} 
-                        value = {details.password}
+                        value = {loginValues.password}
                     />
                     <br/>
-                    <br/>
+                    
                 <button className = "button submit">Login</button>
+                <br/><br/>
+                <Link to = "/signup">Create account</Link>
             </form>
                 {/* <p>{(error !== '') ? ( <div className = 'error' style = {{ color:'red' }}>{error}</div> ) : '' } </p> */}
         </div>
