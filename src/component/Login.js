@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { axiosWithAuth } from "../Utils/axiosWithAuth";
 
 const initialValues  = {
@@ -16,11 +16,13 @@ function Login(props) {
         setLoginValues({...loginValues,[e.target.name]:e.target.value})
     }
 
+    const history = useHistory();
+
     const submitHandler = (e) => {
         e.preventDefault();
     
         axios
-            .post("https://frozen-lowlands-84790.herokuapp.com/login",
+            .post("https://frozen-lowlands-84790.herokuapp.com/api/auth/login",
             `grant_type=password&username=${loginValues.username}&password=${loginValues.password}`,
             {
                 headers: {

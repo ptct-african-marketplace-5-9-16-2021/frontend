@@ -1,6 +1,6 @@
 import Login from "./component/Login";
 import AddItem from "./component/AddItem";
-import Signup from "./component/SignUp";
+import Register from "./component/SignUp";
 import './App.css';
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -17,8 +17,8 @@ function App() {
         </header>
         {/* <PrivateRoute path='/list' component={List} /> */}
         <Route exact path = "/" component = {Login} />
-        <Route exact path = "/signup" component = {Signup} />
-        <ProtectedRoute path = "/owner" component = {AddItem}/>
+        <Route exact path = "/api/auth/register" component = {Register} />
+        <ProtectedRoute path = "/api/market/stores" component = {AddItem}/>
         {/* <ProtectedRoute path = "/buyer" component={List}/> */}
       </div>
     </Router>
